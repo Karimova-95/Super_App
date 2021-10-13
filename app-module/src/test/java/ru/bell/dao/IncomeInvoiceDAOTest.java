@@ -20,10 +20,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext
 public class IncomeInvoiceDAOTest {
 
     @Autowired

@@ -16,7 +16,6 @@ public class IncomeInvoiceService {
         this.repository = repository;
     }
 
-
     public List<IncomeInvoice> getIncomeInvoices() {
         return  repository.get();
     }

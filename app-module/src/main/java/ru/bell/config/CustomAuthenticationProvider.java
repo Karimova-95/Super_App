@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-@Component
 @Slf4j
+@Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired

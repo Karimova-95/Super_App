@@ -6,7 +6,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class IncomeInvoiceIncorrectData {
-
     private String info;
-
 }

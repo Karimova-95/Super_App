@@ -4,15 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import ru.bell.personproperty.PersonInfo;
 
 import javax.sql.DataSource;
 
 @SpringBootApplication(scanBasePackages = "ru.bell")
 @EnableAspectJAutoProxy
-//@EnableConfigurationProperties(PersonInfo.class)
+@EnableConfigurationProperties(PersonInfo.class)
 @ConfigurationPropertiesScan("ru.bell")
 public class App {
 
