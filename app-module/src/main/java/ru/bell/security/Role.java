@@ -1,6 +1,7 @@
 package ru.bell.security;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static ru.bell.security.Permissions.*;
@@ -16,7 +17,7 @@ public enum Role {
     }
 
     Role(Permissions permission) {
-        this.permissions = Arrays.asList(permission);
+        this.permissions = Collections.singletonList(permission);
     }
 
     public List<Permissions> getPermissions() {
