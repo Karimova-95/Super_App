@@ -1,1 +1,1 @@
-Версия приложения: @project.version@
+Версия приложеия: @project.version@
