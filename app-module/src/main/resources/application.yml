@@ -1,15 +1,23 @@
 spring:
+  r2dbc:
+    url: r2dbc:h2:file:///./tmp/test-database
+    username: sa
+    password:
+  main:
+    allow-bean-definition-overriding: true
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    url: jdbc:h2:file:./tmp/test-database
+    user: sa
+    password:
+
   h2:
     console:
       enabled: true
       path: /h2-console
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/mydb
-    username: sa
-    password: sa
-  flyway:
-    enabled: true
-    locations: classpath:/db/migration
+
+
 server:
   port: 80
 
@@ -20,9 +28,9 @@ person:
 
 
 ---
-spring:
-  profiles: "test"
-  main:
-    lazy-initialization: true
-  datasource:
-    url: jdbc:h2:mem:test
+#spring:
+#  profiles: "test"
+#  main:
+#    lazy-initialization: true
+#  datasource:
+#    url: jdbc:h2:mem:test
