@@ -3,7 +3,6 @@ package ru.bell.dto;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 @NoArgsConstructor
 public class IncomeInvoice extends Invoice  implements Serializable {

@@ -1,13 +1,18 @@
 package ru.bell.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.bell.dto.IncomeInvoice;
+import ru.bell.exception.NoSuchIncomeInvoiceException;
 import ru.bell.service.IncomeInvoiceService;
-
-import java.util.List;
 
 @RestController
 public class IncomeInvoiceController {
@@ -19,36 +24,36 @@ public class IncomeInvoiceController {
 
     @GetMapping("/income")
 //    @PreAuthorize("hasAuthority('READ')")
-    public List<IncomeInvoice> getIncomeInvoices() {
+    public Flux<IncomeInvoice> getIncomeInvoices() {
         return service.getIncomeInvoices();
     }
 
-//    @GetMapping("/income/{id}")
+    @GetMapping("/income/{id}")
 //    @PreAuthorize("hasAuthority('READ')")
-//    public IncomeInvoice getIncomeInvoicesById(@PathVariable Long id) {
-//        IncomeInvoice invoice = service.getIncomeInvoiceById(id);
-//        if (invoice == null) {
-//            throw new NoSuchIncomeInvoiceException("There is no Income Invoice with id = " + id + " in Database");
-//        }
-//        return invoice;
-//    }
+    public Flux<IncomeInvoice> getIncomeInvoicesById(@PathVariable Integer id) {
+        Flux<IncomeInvoice> invoice = service.getIncomeInvoiceById(id);
+        if (invoice == null) {
+            throw new NoSuchIncomeInvoiceException("There is no Income Invoice with id = " + id + " in Database");
+        }
+        return invoice;
+    }
 
-//    @PostMapping("/income/save")
-////    @PreAuthorize("hasAuthority('WRITE')")
-//    public IncomeInvoice createIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
-//        return service.create(incomeInvoice);
-//    }
+    @PostMapping("/income/save")
+//    @PreAuthorize("hasAuthority('WRITE')")
+    public Flux<IncomeInvoice> createIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
+        return service.create(incomeInvoice);
+    }
 
     @DeleteMapping("/income/delete/{id}")
 //    @PreAuthorize("hasAuthority('WRITE')")
-    public boolean deleteIncomeInvoiceById(@PathVariable Integer id) {
+    public Mono<Void> deleteIncomeInvoiceById(@PathVariable Integer id) {
         return service.deleteIncomeInvoiceById(id);
     }
 
-//    @PutMapping("/income/update")
+    @PutMapping("/income/update")
 //    @PreAuthorize("hasAuthority('WRITE')")
-//    public IncomeInvoice updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
-//        return service.updateIncomeInvoice(incomeInvoice);
-//    }
+    public Flux<IncomeInvoice> updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
+        return service.updateIncomeInvoice(incomeInvoice);
+    }
 
 }

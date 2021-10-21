@@ -1,99 +1,101 @@
-//package ru.bell.dao;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.cache.annotation.CacheEvict;
-//import org.springframework.cache.annotation.CachePut;
-//import org.springframework.cache.annotation.Cacheable;
-//import org.springframework.cache.annotation.Caching;
-//import org.springframework.cache.annotation.EnableCaching;
-//import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-//import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-//import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-//import org.springframework.jdbc.support.GeneratedKeyHolder;
-//import org.springframework.jdbc.support.KeyHolder;
-//import org.springframework.stereotype.Repository;
-//import ru.bell.dto.IncomeInvoice;
-//
-//import java.util.List;
-//import java.util.Objects;
-//
-//@Repository
-//@Slf4j
-//@EnableCaching
-//public class IncomeInvoiceDAO {
-//    private final NamedParameterJdbcTemplate namedJdbcTemplate;
-//    private final IncomeInvoiceMapper mapper;
-//
-//    public IncomeInvoiceDAO(NamedParameterJdbcTemplate namedJdbcTemplate) {
-//        this.namedJdbcTemplate = namedJdbcTemplate;
-//        this.mapper = new IncomeInvoiceMapper();
-//    }
-//
-//    @Cacheable(value = "incomes", key = "'all'")
-//    public List<IncomeInvoice> get() {
-//        String sql = "select * from income_invoice";
-//        return namedJdbcTemplate.query(sql, mapper);
-//    }
-//
-//    @Caching(
-//            put = @CachePut(value = "incomes", key = "#result.id"),
-//            evict = @CacheEvict(value = "incomes", key = "'all'")
-//    )
-//    public IncomeInvoice create(IncomeInvoice doc) {
-//        String sql = "INSERT INTO income_invoice (date, no, from_ca, to_ca, doc_sum, description) " +
-//                "VALUES (:date, :no, :from, :to, :sum, :description)";
-//        KeyHolder keyHolder = new GeneratedKeyHolder();
-//        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
-//                .addValue("date", doc.getDate())
-//                .addValue("no", doc.getNo())
-//                .addValue("from", doc.getFrom())
-//                .addValue("to", doc.getTo())
-//                .addValue("sum", doc.getSum())
-//                .addValue("description", doc.getDescription());
-//        namedJdbcTemplate.update(sql, sqlParameterSource, keyHolder);
-//        Objects.requireNonNull(keyHolder.getKey(), "id not created");
-//        return get(keyHolder.getKey().longValue());
-//    }
-//
-//    @Cacheable(value = "incomes", key = "#id")
-//    public IncomeInvoice get(Long id) {
-//        String sql = "SELECT * FROM income_invoice WHERE id = :id";
-//        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("id", id);
-//        IncomeInvoice invoice;
-//        try {
-//            invoice = namedJdbcTemplate.queryForObject(sql, mapSqlParameterSource, mapper);
-//        } catch (Exception ex) {
-//            invoice = null;
-//        }
-//        return invoice;
-//    }
-//
-//    @Caching(
-//            evict = {@CacheEvict(value = "incomes", key = "#id"), @CacheEvict(value = "incomes", key = "'all'")}
-//    )
-//    public boolean delete(Long id) {
-//        String sql = "DELETE FROM income_invoice WHERE id = :id";
-//        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("id", id);
-//        return namedJdbcTemplate.update(sql, mapSqlParameterSource) > 0;
-//    }
-//
-//    @Caching(
-//            put = @CachePut(value = "incomes", key = "#p0"),
-//            evict = @CacheEvict(value = "incomes", key = "'all'")
-//    )
-//    public IncomeInvoice update(IncomeInvoice doc) {
-//        String sql = "UPDATE income_invoice SET date = :date, no = :no, from_ca = :from, to_ca = :to, doc_sum = :sum, description = :description WHERE id = :id";
-//        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-//                .addValue("date", doc.getDate())
-//                .addValue("no", doc.getNo())
-//                .addValue("from", doc.getFrom())
-//                .addValue("to", doc.getTo())
-//                .addValue("sum", doc.getSum())
-//                .addValue("description", doc.getDescription())
-//                .addValue("id", doc.getId());
-//        if ((namedJdbcTemplate.update(sql, mapSqlParameterSource)) < 1) {
-//            return null;
-//        }
-//        return get(doc.getId());
-//    }
-//}
+package ru.bell.dao;
+
+import io.r2dbc.spi.Connection;
+import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.spi.Result;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.bell.dto.IncomeInvoice;
+
+@Repository
+public class IncomeInvoiceDAO {
+    private final ConnectionFactory connectionFactory;
+
+    public IncomeInvoiceDAO(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public Mono<Void> delete(Integer id) {
+        return this.connection()
+                .flatMapMany(c -> c.createStatement("DELETE FROM income_invoice WHERE id = $1")
+                        .bind("$1", id)
+                        .execute())
+                .then();
+    }
+
+    public Flux<IncomeInvoice> get(Integer id) {
+        return this.connection()
+                .flatMapMany(c -> c.createStatement("SELECT * FROM income_invoice WHERE id = $1")
+                        .bind("$1", id)
+                        .execute())
+                .flatMap(r -> r.map((((row, rowMetadata) ->
+                        new IncomeInvoice
+                                (row.get("id", Integer.class),
+                                row.get("no", Integer.class),
+                                row.get("from_ca", String.class),
+                                row.get("to_ca", String.class),
+                                row.get("doc_sum", Integer.class),
+                                row.get("description", String.class))))));
+    }
+
+    public Flux<IncomeInvoice> get() {
+        return this.connection()
+                .flatMapMany(connection ->
+                        Flux.from(connection.createStatement("SELECT * FROM income_invoice").execute())
+                                .flatMap(r -> r.map(((row, rowMetadata)
+                                        -> new IncomeInvoice
+                                        (row.get("id", Integer.class),
+                                        row.get("no", Integer.class),
+                                        row.get("from_ca", String.class),
+                                        row.get("to_ca", String.class),
+                                        row.get("doc_sum", Integer.class),
+                                        row.get("description", String.class))))));
+    }
+
+    public Flux<IncomeInvoice> create(IncomeInvoice invoice) {
+        Flux<? extends Result> flatMapMany = this.connection()
+                .flatMapMany(conn -> conn.createStatement("INSERT INTO income_invoice (no, from_ca, to_ca, doc_sum, description) " +
+                                "VALUES ($1, $2, $3, $4, $5)")
+                        .bind("$1", invoice.getNo())
+                        .bind("$2", invoice.getFrom())
+                        .bind("$3", invoice.getTo())
+                        .bind("$4", invoice.getSum())
+                        .bind("$5", invoice.getDescription())
+                        .add()
+                        .execute());
+        return flatMapMany
+                .switchMap(x -> Flux.just(new IncomeInvoice
+                        (invoice.getId(),
+                        invoice.getNo(),
+                        invoice.getFrom(),
+                        invoice.getTo(),
+                        invoice.getSum(),
+                        invoice.getDescription())));
+    }
+
+    public Flux<IncomeInvoice> update(IncomeInvoice invoice) {
+        Flux<? extends Result> flatMapMany = this.connection()
+                .flatMapMany(conn -> conn.createStatement("UPDATE income_invoice SET  no = $2, from_ca = $3, to_ca = $4, doc_sum = $5, description = $6 WHERE id = $1")
+                        .bind("$1", invoice.getId())
+                        .bind("$2", invoice.getNo())
+                        .bind("$3", invoice.getFrom())
+                        .bind("$4", invoice.getTo())
+                        .bind("$5", invoice.getSum())
+                        .bind("$6", invoice.getDescription())
+                        .add()
+                        .execute());
+        return flatMapMany
+                .switchMap(x -> Flux.just(new IncomeInvoice
+                        (invoice.getId(),
+                        invoice.getNo(),
+                        invoice.getFrom(),
+                        invoice.getTo(),
+                        invoice.getSum(),
+                        invoice.getDescription())));
+    }
+
+    private Mono<Connection> connection() {
+        return Mono.from(this.connectionFactory.create());
+    }
+}
