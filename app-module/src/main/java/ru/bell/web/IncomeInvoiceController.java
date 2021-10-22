@@ -1,6 +1,6 @@
 package ru.bell.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,15 +23,16 @@ public class IncomeInvoiceController {
     }
 
     @GetMapping("/income")
-//    @PreAuthorize("hasAuthority('READ')")
+    @PreAuthorize("hasAuthority('READ')")
     public Flux<IncomeInvoice> getIncomeInvoices() {
-        return service.getIncomeInvoices();
+        Flux<IncomeInvoice> incomeInvoices = service.getIncomeInvoices();
+        return incomeInvoices;
     }
 
     @GetMapping("/income/{id}")
-//    @PreAuthorize("hasAuthority('READ')")
-    public Flux<IncomeInvoice> getIncomeInvoicesById(@PathVariable Integer id) {
-        Flux<IncomeInvoice> invoice = service.getIncomeInvoiceById(id);
+    @PreAuthorize("hasAuthority('READ')")
+    public Mono<IncomeInvoice> getIncomeInvoicesById(@PathVariable Integer id) {
+        Mono<IncomeInvoice> invoice = service.getIncomeInvoiceById(id);
         if (invoice == null) {
             throw new NoSuchIncomeInvoiceException("There is no Income Invoice with id = " + id + " in Database");
         }
@@ -39,19 +40,19 @@ public class IncomeInvoiceController {
     }
 
     @PostMapping("/income/save")
-//    @PreAuthorize("hasAuthority('WRITE')")
+    @PreAuthorize("hasAuthority('WRITE')")
     public Flux<IncomeInvoice> createIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
         return service.create(incomeInvoice);
     }
 
     @DeleteMapping("/income/delete/{id}")
-//    @PreAuthorize("hasAuthority('WRITE')")
+    @PreAuthorize("hasAuthority('WRITE')")
     public Mono<Void> deleteIncomeInvoiceById(@PathVariable Integer id) {
         return service.deleteIncomeInvoiceById(id);
     }
 
     @PutMapping("/income/update")
-//    @PreAuthorize("hasAuthority('WRITE')")
+    @PreAuthorize("hasAuthority('WRITE')")
     public Flux<IncomeInvoice> updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
         return service.updateIncomeInvoice(incomeInvoice);
     }

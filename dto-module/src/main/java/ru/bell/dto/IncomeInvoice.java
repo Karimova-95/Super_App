@@ -10,7 +10,7 @@ public class IncomeInvoice extends Invoice  implements Serializable {
         super(no, from, to, sum, description);
     }
 
-    public IncomeInvoice(int no, String from, String to, Integer sum, String description) {
+    public IncomeInvoice(Integer no, String from, String to, Integer sum, String description) {
         super(no, from, to, sum, description);
     }
 }

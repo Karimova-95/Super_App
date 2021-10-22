@@ -17,15 +17,8 @@ spring:
       enabled: true
       path: /h2-console
 
-
 server:
   port: 80
-
-# UserConfig properties
-person:
-  name: Maxim
-  age: 45
-
 
 ---
 #spring:

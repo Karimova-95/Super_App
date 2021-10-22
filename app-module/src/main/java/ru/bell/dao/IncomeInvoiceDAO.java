@@ -24,7 +24,7 @@ public class IncomeInvoiceDAO {
                 .then();
     }
 
-    public Flux<IncomeInvoice> get(Integer id) {
+    public Mono<IncomeInvoice> get(Integer id) {
         return this.connection()
                 .flatMapMany(c -> c.createStatement("SELECT * FROM income_invoice WHERE id = $1")
                         .bind("$1", id)
@@ -36,7 +36,7 @@ public class IncomeInvoiceDAO {
                                 row.get("from_ca", String.class),
                                 row.get("to_ca", String.class),
                                 row.get("doc_sum", Integer.class),
-                                row.get("description", String.class))))));
+                                row.get("description", String.class)))))).next();
     }
 
     public Flux<IncomeInvoice> get() {
@@ -46,11 +46,11 @@ public class IncomeInvoiceDAO {
                                 .flatMap(r -> r.map(((row, rowMetadata)
                                         -> new IncomeInvoice
                                         (row.get("id", Integer.class),
-                                        row.get("no", Integer.class),
-                                        row.get("from_ca", String.class),
-                                        row.get("to_ca", String.class),
-                                        row.get("doc_sum", Integer.class),
-                                        row.get("description", String.class))))));
+                                                row.get("no", Integer.class),
+                                                row.get("from_ca", String.class),
+                                                row.get("to_ca", String.class),
+                                                row.get("doc_sum", Integer.class),
+                                                row.get("description", String.class))))));
     }
 
     public Flux<IncomeInvoice> create(IncomeInvoice invoice) {
@@ -67,11 +67,11 @@ public class IncomeInvoiceDAO {
         return flatMapMany
                 .switchMap(x -> Flux.just(new IncomeInvoice
                         (invoice.getId(),
-                        invoice.getNo(),
-                        invoice.getFrom(),
-                        invoice.getTo(),
-                        invoice.getSum(),
-                        invoice.getDescription())));
+                                invoice.getNo(),
+                                invoice.getFrom(),
+                                invoice.getTo(),
+                                invoice.getSum(),
+                                invoice.getDescription())));
     }
 
     public Flux<IncomeInvoice> update(IncomeInvoice invoice) {
@@ -88,11 +88,11 @@ public class IncomeInvoiceDAO {
         return flatMapMany
                 .switchMap(x -> Flux.just(new IncomeInvoice
                         (invoice.getId(),
-                        invoice.getNo(),
-                        invoice.getFrom(),
-                        invoice.getTo(),
-                        invoice.getSum(),
-                        invoice.getDescription())));
+                                invoice.getNo(),
+                                invoice.getFrom(),
+                                invoice.getTo(),
+                                invoice.getSum(),
+                                invoice.getDescription())));
     }
 
     private Mono<Connection> connection() {

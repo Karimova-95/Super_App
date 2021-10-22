@@ -21,7 +21,7 @@ public class IncomeInvoiceService {
         return  dao.get();
     }
 
-    public Flux<IncomeInvoice> getIncomeInvoiceById(Integer id) {
+    public Mono<IncomeInvoice> getIncomeInvoiceById(Integer id) {
         return dao.get(id);
     }
 
