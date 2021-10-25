@@ -7,8 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.r2dbc.connection.init.CompositeDatabasePopulator;
 import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
+import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 @SpringBootApplication(scanBasePackages = "ru.bell")
@@ -26,6 +28,7 @@ public class App {
 //        populator.addPopulators(new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__structure.sql")));
 //        populator.addPopulators(new ResourceDatabasePopulator(new ClassPathResource("db/migration/V2__security.sql")));
 //        populator.addPopulators(new ResourceDatabasePopulator(new ClassPathResource("db/migration/V3__sec_data.sql")));
+//        populator.addPopulators(new ResourceDatabasePopulator(new ClassPathResource("db/migration/V4__insert.sql")));
         initializer.setDatabasePopulator(populator);
 
         return initializer;

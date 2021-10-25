@@ -29,7 +29,7 @@ public class IncomeInvoiceService {
         return dao.delete(id);
     }
 
-    public Flux<IncomeInvoice> create(IncomeInvoice incomeInvoice) {
+    public Mono<IncomeInvoice> create(IncomeInvoice incomeInvoice) {
         return dao.create(incomeInvoice).cast(IncomeInvoice.class);
     }
 

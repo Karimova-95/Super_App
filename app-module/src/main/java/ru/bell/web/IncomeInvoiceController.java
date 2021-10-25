@@ -41,7 +41,7 @@ public class IncomeInvoiceController {
 
     @PostMapping("/income/save")
     @PreAuthorize("hasAuthority('WRITE')")
-    public Flux<IncomeInvoice> createIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
+    public Mono<IncomeInvoice> createIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
         return service.create(incomeInvoice);
     }
 
