@@ -25,13 +25,13 @@ public class IncomeInvoiceController {
     }
 
     @GetMapping("/income")
-    @PreAuthorize("hasRole('READ')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Flux<IncomeInvoice> getIncomeInvoices() {
         return service.getIncomeInvoices();
     }
 
     @GetMapping("/income/{id}")
-    @PreAuthorize("hasRole('READ')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Mono<IncomeInvoice> getIncomeInvoicesById(@PathVariable Integer id) {
         Mono<IncomeInvoice> invoice = service.getIncomeInvoiceById(id);
         if (invoice == null) {
@@ -41,19 +41,19 @@ public class IncomeInvoiceController {
     }
 
     @PostMapping("/income/save")
-    @PreAuthorize("hasRole('WRITE')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public Mono<IncomeInvoice> createIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
         return service.create(incomeInvoice);
     }
 
     @DeleteMapping("/income/delete/{id}")
-    @PreAuthorize("hasRole('WRITE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Mono<Void> deleteIncomeInvoiceById(@PathVariable Integer id) {
         return service.deleteIncomeInvoiceById(id);
     }
 
     @PutMapping("/income/update")
-    @PreAuthorize("hasRole('WRITE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Flux<IncomeInvoice> updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
         return service.updateIncomeInvoice(incomeInvoice);
     }

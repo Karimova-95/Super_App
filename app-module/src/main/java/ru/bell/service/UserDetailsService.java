@@ -7,13 +7,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import ru.bell.dao.UserDAO;
+import ru.bell.dao.UserSecDAO;
+import ru.bell.security.Role;
 
 @Service
 @RequiredArgsConstructor
 public class UserDetailsService implements ReactiveUserDetailsService {
 
-    private final UserDAO dao;
+    private final UserSecDAO dao;
 
     @Override
     public Mono<UserDetails> findByUsername(String username) {
@@ -22,6 +23,6 @@ public class UserDetailsService implements ReactiveUserDetailsService {
                         Mono.error(new UsernameNotFoundException("User Not Found"))))
                 .map(userSec -> User.withUsername(userSec.getUsername())
                         .password("{MD5}" + userSec.getPassword())
-                        .roles(userSec.getGroupName()).build());
+                        .roles(Role.fromValue(userSec.getGroupName()).name()).build());
     }
 }

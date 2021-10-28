@@ -6,9 +6,9 @@ import reactor.core.publisher.Mono;
 import ru.bell.security.UserSec;
 
 @Repository
-public class UserDAO extends AbstractDAO{
+public class UserSecDAO extends AbstractDAO{
 
-    protected UserDAO(ConnectionFactory connectionFactory) {
+    protected UserSecDAO(ConnectionFactory connectionFactory) {
         super(connectionFactory);
     }
 
@@ -16,7 +16,7 @@ public class UserDAO extends AbstractDAO{
         return this.connection()
                 .flatMapMany(c -> c.createStatement("SELECT user.name, user.id, user.password_hash, " +
                                 "user.id_group, gr.name AS group_name FROM sec_user AS user " +
-                                "LEFT JOIN sec_group AS gr WHERE user.name = ($1)")
+                                "LEFT JOIN sec_group AS gr ON user.id_group = gr.id WHERE user.name = ($1)")
                         .bind("$1", username)
                         .execute())
                 .flatMap(r -> r.map((row, rowMetadata) ->
