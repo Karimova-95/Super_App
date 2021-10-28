@@ -14,6 +14,8 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSec implements UserDetails {
+    private static final long serialVersionUID = 54844551656L;
+
     private Integer id;
     private String groupName;
     private Integer groupId;
