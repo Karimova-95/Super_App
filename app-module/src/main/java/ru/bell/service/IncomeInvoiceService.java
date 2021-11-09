@@ -1,31 +1,27 @@
 package ru.bell.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.bell.dao.IncomeInvoiceDAO;
+import ru.bell.dao.IncomeInvoiceDao;
 import ru.bell.dto.IncomeInvoice;
 
+@RequiredArgsConstructor
 @Service
 public class IncomeInvoiceService {
 
-    private final IncomeInvoiceDAO dao;
-
-    @Autowired
-    public IncomeInvoiceService(IncomeInvoiceDAO dao) {
-        this.dao = dao;
-    }
+    private final IncomeInvoiceDao dao;
 
     public Flux<IncomeInvoice> getIncomeInvoices() {
         return  dao.get();
     }
 
-    public Mono<IncomeInvoice> getIncomeInvoiceById(Integer id) {
+    public Mono<IncomeInvoice> getIncomeInvoiceById(Long id) {
         return dao.get(id);
     }
 
-    public Mono<Void> deleteIncomeInvoiceById(Integer id) {
+    public Mono<Boolean> deleteIncomeInvoiceById(Long id) {
         return dao.delete(id);
     }
 
@@ -33,7 +29,7 @@ public class IncomeInvoiceService {
         return dao.create(incomeInvoice).cast(IncomeInvoice.class);
     }
 
-    public Flux<IncomeInvoice> updateIncomeInvoice(IncomeInvoice incomeInvoice) {
+    public Mono<IncomeInvoice> updateIncomeInvoice(IncomeInvoice incomeInvoice) {
         return dao.update(incomeInvoice);
     }
 }

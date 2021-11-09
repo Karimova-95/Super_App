@@ -18,7 +18,7 @@ public class IncomeInvoiceGlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<IncomeInvoiceIncorrectData> handleException(Exception exception) {
         IncomeInvoiceIncorrectData incorrectData = new IncomeInvoiceIncorrectData();
-        incorrectData.setInfo(exception.getMessage());
+        incorrectData.setInfo(String.format("%s - %s.", exception.getClass().getName(), exception.getMessage()));
         return new ResponseEntity<>(incorrectData, HttpStatus.BAD_REQUEST);
     }
 }

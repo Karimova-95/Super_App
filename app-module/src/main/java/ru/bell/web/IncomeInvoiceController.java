@@ -32,7 +32,7 @@ public class IncomeInvoiceController {
 
     @GetMapping("/income/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Mono<IncomeInvoice> getIncomeInvoicesById(@PathVariable Integer id) {
+    public Mono<IncomeInvoice> getIncomeInvoicesById(@PathVariable Long id) {
         Mono<IncomeInvoice> invoice = service.getIncomeInvoiceById(id);
         if (invoice == null) {
             throw new NoSuchIncomeInvoiceException("There is no Income Invoice with id = " + id + " in Database");
@@ -48,13 +48,13 @@ public class IncomeInvoiceController {
 
     @DeleteMapping("/income/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Mono<Void> deleteIncomeInvoiceById(@PathVariable Integer id) {
+    public Mono<Boolean> deleteIncomeInvoiceById(@PathVariable Long id) {
         return service.deleteIncomeInvoiceById(id);
     }
 
     @PutMapping("/income/update")
     @PreAuthorize("hasRole('ADMIN')")
-    public Flux<IncomeInvoice> updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
+    public Mono<IncomeInvoice> updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
         return service.updateIncomeInvoice(incomeInvoice);
     }
 

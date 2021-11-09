@@ -20,4 +20,3 @@ CREATE TABLE sec_user
 INSERT INTO sec_group(name)
 VALUES ('ADMIN'),
        ('USER');
-

@@ -4,7 +4,7 @@ CREATE SEQUENCE invoice_seq
 
 CREATE TABLE income_invoice
 (
-    id          BIGINT DEFAULT NEXT VALUE FOR invoice_seq,
+    id          BIGINT DEFAULT NEXT VALUE FOR invoice_seq PRIMARY KEY ,
     date        TIMESTAMP   not null,
     no          INT         not null,
     from_ca     varchar(25) not null,
