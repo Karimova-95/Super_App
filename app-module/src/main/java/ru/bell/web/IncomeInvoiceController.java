@@ -27,13 +27,13 @@ public class IncomeInvoiceController {
     @GetMapping("/income")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Flux<IncomeInvoice> getIncomeInvoices() {
-        return service.getIncomeInvoices();
+        return service.get();
     }
 
     @GetMapping("/income/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Mono<IncomeInvoice> getIncomeInvoicesById(@PathVariable Long id) {
-        Mono<IncomeInvoice> invoice = service.getIncomeInvoiceById(id);
+        Mono<IncomeInvoice> invoice = service.get(id);
         if (invoice == null) {
             throw new NoSuchIncomeInvoiceException("There is no Income Invoice with id = " + id + " in Database");
         }
@@ -49,13 +49,13 @@ public class IncomeInvoiceController {
     @DeleteMapping("/income/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<Boolean> deleteIncomeInvoiceById(@PathVariable Long id) {
-        return service.deleteIncomeInvoiceById(id);
+        return service.delete(id);
     }
 
     @PutMapping("/income/update")
     @PreAuthorize("hasRole('ADMIN')")
     public Mono<IncomeInvoice> updateIncomeInvoice(@RequestBody IncomeInvoice incomeInvoice) {
-        return service.updateIncomeInvoice(incomeInvoice);
+        return service.update(incomeInvoice);
     }
 
 }
