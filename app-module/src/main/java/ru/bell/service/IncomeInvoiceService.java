@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.bell.dto.IncomeInvoice;
+import ru.bell.exception.NoSuchIncomeInvoiceException;
 import ru.bell.repository.IncomeInvoiceRepository;
 
 @RequiredArgsConstructor
@@ -18,7 +19,11 @@ public class IncomeInvoiceService {
     }
 
     public Mono<IncomeInvoice> get(Long id) {
-        return repository.findById(id);
+        final Mono<IncomeInvoice> invoiceMono = repository.findById(id);
+        return Mono.create(incomeInvoiceMonoSink -> {
+            invoiceMono.subscribe(incomeInvoiceMonoSink::success);
+            incomeInvoiceMonoSink.error(new NoSuchIncomeInvoiceException("Income Invoice with id = " + id + " not found!"));
+        });
     }
 
     public Flux<IncomeInvoice> get() {
@@ -30,6 +35,10 @@ public class IncomeInvoiceService {
     }
 
     public Mono<IncomeInvoice> update(IncomeInvoice invoice) {
-        return repository.save(invoice);
+        Mono<IncomeInvoice> invoiceMono = repository.save(invoice);
+        return Mono.create(incomeInvoiceMonoSink -> {
+            invoiceMono.subscribe(incomeInvoiceMonoSink::success);
+            incomeInvoiceMonoSink.error(new NoSuchIncomeInvoiceException("Income Invoice with id = " + invoice.getId() + " not found!"));
+        });
     }
 }
