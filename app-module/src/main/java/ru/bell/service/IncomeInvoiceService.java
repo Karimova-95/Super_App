@@ -9,30 +9,30 @@ import java.util.List;
 
 @Service
 public class IncomeInvoiceService {
-    private final IncomeInvoiceDAO repository;
+    private final IncomeInvoiceDAO dao;
 
     @Autowired
-    public IncomeInvoiceService(IncomeInvoiceDAO repository) {
-        this.repository = repository;
+    public IncomeInvoiceService(IncomeInvoiceDAO dao) {
+        this.dao = dao;
     }
 
     public List<IncomeInvoice> getIncomeInvoices() {
-        return  repository.get();
+        return  dao.get();
     }
 
     public IncomeInvoice getIncomeInvoiceById(Long id) {
-        return repository.get(id);
+        return dao.get(id);
     }
 
     public boolean deleteIncomeInvoiceById(Long id) {
-        return repository.delete(id);
+        return dao.delete(id);
     }
 
     public IncomeInvoice createIncomeInvoice(IncomeInvoice incomeInvoice) {
-        return repository.create(incomeInvoice);
+        return dao.create(incomeInvoice);
     }
 
     public IncomeInvoice updateIncomeInvoice(IncomeInvoice incomeInvoice) {
-        return repository.update(incomeInvoice);
+        return dao.update(incomeInvoice);
     }
 }
