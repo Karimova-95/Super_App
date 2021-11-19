@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
-@SpringBootApplication(scanBasePackages = "ru.bell")
+@SpringBootApplication
 @EnableAspectJAutoProxy
 @ConfigurationPropertiesScan("ru.bell")
 @EnableWebFlux

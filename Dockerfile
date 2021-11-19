@@ -1,3 +1,4 @@
+#mvn package dependency:copy-dependencies -DincludeScope=runtime
 FROM openjdk:8
 
 RUN mkdir /app
